@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
+
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -12,6 +11,16 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold();
+    return const Scaffold(
+      
+        body:   Column(
+          children: [
+            Center(child: Text("Smart farm app",style: TextStyle(color: Color(0xff296e49)),)),
+            Text("Please wath a video here"),
+            Icon( Icons.live_tv)
+          ],
+        ),
+      
+    );
   }
 }
