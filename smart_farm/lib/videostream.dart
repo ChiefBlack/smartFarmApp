@@ -1,51 +1,56 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
+void main() => runApp(const VideoApp());
 
-
-class VideoPlayerWidget extends StatefulWidget {
-  final String videoUrl;
-
-  VideoPlayerWidget({required this.videoUrl});
+/// Stateful widget to fetch and then display video content.
+class VideoApp extends StatefulWidget {
+  const VideoApp({super.key});
 
   @override
-  _VideoPlayerWidgetState createState() => _VideoPlayerWidgetState();
+  State<VideoApp> createState() => _VideoAppState();
 }
 
-class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
+class _VideoAppState extends State<VideoApp> {
   late VideoPlayerController _controller;
 
   @override
   void initState() {
     super.initState();
-    _controller = VideoPlayerController.network(widget.videoUrl)
+    _controller = VideoPlayerController.networkUrl(Uri.parse(
+        'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4'))
       ..initialize().then((_) {
-        // Ensure the first frame is shown
+        // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
         setState(() {});
       });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: AppBar(backgroundColor:const Color.fromRGBO(41, 110, 73, 1),elevation: 5.0,
-   
-    title:const Center(child: Text("Livestock smartApp",style: TextStyle(fontFamily: "Ariel",fontSize: 25,color: Colors.white),))),
+    return 
     
-      body: Center(
-        child: _controller.value.isInitialized
-            ? AspectRatio(
-                aspectRatio: _controller.value.aspectRatio,
-                child: VideoPlayer(_controller),
-              )
-            :const CircularProgressIndicator(), // Show a loading indicator until the video is initialized
-      ),
-      floatingActionButton:
-      
-          Icon( Icons.live_tv,size: 203,),
-       
-     
+       Scaffold(
+        body: Center(
+          child: _controller.value.isInitialized
+              ? AspectRatio(
+                  aspectRatio: _controller.value.aspectRatio,
+                  child: VideoPlayer(_controller),
+                )
+              : Container(),
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            setState(() {
+              _controller.value.isPlaying
+                  ? _controller.pause()
+                  : _controller.play();
+            });
+          },
+          child: Icon(
+            _controller.value.isPlaying ? Icons.pause : Icons.play_arrow,
+          ),
+        ),
+    
     );
   }
 
