@@ -38,7 +38,7 @@ List<String> recipents = ["1234567890"];
           //  color: Colors.black,
             child:    ElevatedButton(onPressed:(){
 //_sendSMS(message, recipents);
-print("data");
+//print("data");
 
             }, child:const Text("please verify your number",style: TextStyle(color: Color.fromARGB(255, 242, 245, 242)),))),
               
@@ -53,10 +53,10 @@ print("data");
     
   }
 }
-void _sendSMS(String message, List<String> recipents) async {
- String _result = await sendSMS(message: message, recipients: recipents);
+ dynamic (String message, List<String> recipents) async {
+ String result = await sendSMS(message: message, recipients: recipents);
     //     .catchError((onError) {
     //   print(onError);
     // });
-print(_result);
+return (result);
 }

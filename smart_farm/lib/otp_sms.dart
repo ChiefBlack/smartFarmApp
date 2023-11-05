@@ -1,5 +1,8 @@
+
+
 import 'package:flutter/material.dart';
 import 'package:pinput/pinput.dart';
+import 'package:smart_farm/homepage.dart';
 
 class OTPPin extends StatefulWidget {
   const OTPPin({super.key});
@@ -8,8 +11,7 @@ class OTPPin extends StatefulWidget {
   State<OTPPin> createState() => _OTPPinState();
 }
 
-class _OTPPinState extends State<OTPPin>
-    with SingleTickerProviderStateMixin {
+class _OTPPinState extends State<OTPPin> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
 
   @override
@@ -26,26 +28,39 @@ class _OTPPinState extends State<OTPPin>
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Column(
-        
-        children: [
-          Text("please put code u got from the sms"),
-          Center(
-            child: Pinput(
-            onCompleted: (pin) => print(pin),
-            defaultPinTheme: PinTheme(width: 56,
+    return SizedBox(
+      child:   Center(
+        child:  Stack(children: [
+ const Image(image: AssetImage('assets/images/image_logo.png')),
+    const    Text("OTP",style: TextStyle(fontSize: 23,color: Colors.black),),
+
+          Pinput(
+          onCompleted: (pin) => {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const HomePage()),
+            )
+          },
+          defaultPinTheme: PinTheme(
+            width: 56,
             height: 56,
-            textStyle: const  TextStyle(fontSize: 20, color: Color.fromRGBO(30, 60, 87, 1), fontWeight: FontWeight.w600),
+            textStyle: const TextStyle(
+                fontSize: 20,
+                color: Color.fromRGBO(30, 60, 87, 1),
+                fontWeight: FontWeight.w600),
             decoration: BoxDecoration(
-            border: Border.all(color:const Color.fromRGBO(234, 239, 243, 1)),
-            borderRadius: BorderRadius.circular(20),
-            ),),
+              border: Border.all(color: const Color.fromARGB(255, 14, 48, 77)),
+              borderRadius: BorderRadius.circular(20),
             ),
           ),
-        ],
+        ),
+        ]
+          
+
+
+        ,)
       ),
     );
   }
 }
+

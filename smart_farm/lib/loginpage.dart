@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:smart_farm/otp_sms.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -14,7 +15,7 @@ class _LoginState extends State<Login> {
   TextEditingController passwordController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    return  SafeArea(
+    return  Container(
     
       child: logging(context),
     );
@@ -36,7 +37,7 @@ class _LoginState extends State<Login> {
                 controller: passwordController,
                 obscureText: true,
                 decoration: const InputDecoration(
-                    border: OutlineInputBorder(), labelText: "enter ur number to use our app"),
+                    border: OutlineInputBorder(), labelText: "Enter Your Number"),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Enter ur number';
@@ -53,13 +54,17 @@ class _LoginState extends State<Login> {
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
                       // Navigate the user to the Home page
+                       Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => const OTPPin()),
+  );
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text('Please fill input')),
                       );
                     }
                   },
-                  child:const  Padding(padding:   EdgeInsets.symmetric(horizontal: 8, vertical: 16),  child:  Text('Submit button')),
+                  child:const  Padding(padding:   EdgeInsets.symmetric(horizontal: 8, vertical: 16),  child:  Text('Comnfirm SMS')),
                 ),
               ),
             ),

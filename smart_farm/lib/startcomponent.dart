@@ -5,9 +5,8 @@ class MyWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Column(children: [
-Text("i love yo")
-      
-    ],);
+    return const Column(
+      children: [Text("i love yo")],
+    );
   }
 }

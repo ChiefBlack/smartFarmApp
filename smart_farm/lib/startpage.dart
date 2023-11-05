@@ -12,11 +12,7 @@ class _LocalPagStateState extends State<LocalPagState> {
   @override
   Widget build(BuildContext context) {
     return const Column(
-  
-        children: [
-          
-          Login()],);
-
+      children: [Login()],
+    );
   }
 }
-
