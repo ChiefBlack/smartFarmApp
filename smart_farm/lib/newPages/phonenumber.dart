@@ -1,109 +1,86 @@
 import 'package:flutter/material.dart';
-import 'package:intl_phone_field/intl_phone_field.dart';
-import 'package:smart_farm/newPages/sendtopage.dart';
-import 'package:smart_farm/utils/custom_image.dart';
+import 'package:flutter_sms/flutter_sms.dart';
+import 'package:smart_farm/otpverification.dart';
 
-class PhoneNumberWidget extends StatefulWidget {
-  const PhoneNumberWidget({super.key});
+class OTPScreen extends StatelessWidget {
+  final TextEditingController phoneNumberController = TextEditingController();
+  final String otp;
+  final Key? key;
+  OTPScreen({
+    required this.otp,
+    this.key,
+  }) : super(key: key);
 
-  @override
-  State<PhoneNumberWidget> createState() => _PhoneNumberWidgetState();
-}
-
-class _PhoneNumberWidgetState extends State<PhoneNumberWidget> {
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-        child: Scaffold(
-            backgroundColor: Colors.grey[5001],
-            appBar: _buildAppBar(context),
-            body: Container(
-                width: double.maxFinite,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 32, vertical: 25),
-                child: Column(children: [
-                  _buildPageHeader(context),
-                  const SizedBox(height: 31),
-                  const CustomImage(),
-                  const SizedBox(height: 33),
-                  const Text("SmartFarm App", style: TextStyle(fontSize: 22)),
-                  const SizedBox(height: 33),
-                 IntlPhoneField(
-    decoration: const InputDecoration(
-        labelText: 'Phone Number',
-        border: OutlineInputBorder(
-            borderSide: BorderSide(),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Enter Phone Number'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            TextField(
+              controller: phoneNumberController,
+              keyboardType: TextInputType.phone,
+              decoration: const InputDecoration(
+                labelText: 'Enter your phone number',
+              ),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                String phoneNumber = phoneNumberController.text.trim();
+                // Validate phone number (if needed)
+                if (phoneNumber.isNotEmpty) {
+                  // Send OTP
+                  sendOTP(context, phoneNumber);
+                } else {
+                  // Handle empty phone number
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Please enter a phone number'),
+                    ),
+                  );
+                }
+              },
+              child: const Text('Send OTP'),
+            ),
+          ],
         ),
-    ),
-    initialCountryCode: 'SA',
-    onChanged: (phone) {
-        //print(phone.completeNumber);
-    },
-),
-                  SizedBox(
-                    height: 40,
-                    width: MediaQuery.of(context).size.width - 50,
-                    child: ElevatedButton(
-                        style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all<Color>(
-                                const Color.fromARGB(255, 102, 170, 134)),
-                            shape: MaterialStateProperty.all<
-                                RoundedRectangleBorder>(RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(18.0),
-                            ))),
-                        child: const Text(
-                          "Verify",
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold),
-                        ),
-                        onPressed: () {
-                          onTapVerify(context);
-                        }),
-                  ),
-                  const SizedBox(height: 14),
-                ]))));
+      ),
+    );
   }
 
-  /// Section Widget
-  PreferredSizeWidget _buildAppBar(BuildContext context) {
-    return AppBar(
-        backgroundColor: const Color.fromARGB(255, 102, 170, 134),
-        leadingWidth: double.maxFinite,
-        leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            padding: const EdgeInsets.fromLTRB(49, 16, 302, 16),
-            onPressed: () {
-              onTapArrowLeft(context);
-            }));
+  void sendOTP(BuildContext context, String phoneNumber) {
+    // Create SMS message body
+    String message = 'Your OTP for verification is: $otp';
+
+    // Use flutter_sms package to send SMS
+    _sendSMS(phoneNumber, message);
+    onTapVerify(context, phoneNumber);
+    //Navigate to OTP verification screen
   }
 
-  /// Section Widget
-  Widget _buildPageHeader(BuildContext context) {
-    return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          SizedBox(
-              width: MediaQuery.of(context).size.width - 20,
-              child: const Text("Enter  your phone number to get started",
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontFamily: "sans-serif",
-                    fontSize: 30,
-                  ))),
-          const SizedBox(height: 2),
-        ]);
+  void _sendSMS(String phoneNumber, String message) async {
+    try {
+      // Use FlutterSms class to send SMS
+      await sendSMS(message: message, recipients: [phoneNumber]);
+    } catch (error) {
+      print("Error sending SMS: $error");
+      // Handle error here
+    }
   }
 
-  /// Navigates back to the previous screen.
-  onTapArrowLeft(BuildContext context) {
-    Navigator.pop(context);
-  }
-
-  /// Navigates to the signupScreen when the action is triggered.
-  onTapVerify(BuildContext context) {
-  Navigator.push(context,  MaterialPageRoute(builder: (context) => const SendToWidget()),);
+  void onTapVerify(BuildContext context, String phoneNumber) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => OTPVerificationScreen(
+                otp: otp,
+                phoneNumber: phoneNumber,
+              )),
+    );
   }
 }

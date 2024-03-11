@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:smart_farm/newPages/Landingpage.dart';
 
-import 'package:smart_farm/videostream.dart';
+
 
 
 
@@ -14,7 +15,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-        debugShowCheckedModeBanner: false, home: VideoApp());
+        debugShowCheckedModeBanner: false, home: LandingPage());
   }
 }
 

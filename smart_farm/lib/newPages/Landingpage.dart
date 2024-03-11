@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:smart_farm/newPages/phonenumber.dart';
 
 import 'package:smart_farm/utils/custom_image.dart';
+import 'package:random_string/random_string.dart';
 
 class LandingPage extends StatefulWidget {
   const LandingPage({super.key});
@@ -24,7 +25,7 @@ class _LandingPageState extends State<LandingPage> {
                 child: Column(children: [
                   _buildPageHeader(context),
                   const SizedBox(height: 31),
-                const  CustomImage(),
+                  const CustomImage(),
                   const SizedBox(height: 33),
                   const Text("SmartFarm App", style: TextStyle(fontSize: 22)),
                   const SizedBox(height: 33),
@@ -42,9 +43,7 @@ class _LandingPageState extends State<LandingPage> {
                         child: const Text(
                           "Get Started",
                           style: TextStyle(
-                              
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold),
+                              fontSize: 20, fontWeight: FontWeight.bold),
                         ),
                         onPressed: () {
                           onTapGetStarted(context);
@@ -94,7 +93,13 @@ class _LandingPageState extends State<LandingPage> {
 
   /// Navigates to the signupScreen when the action is triggered.
   onTapGetStarted(BuildContext context) {
-    Navigator.push(context,  MaterialPageRoute(builder: (context) => const PhoneNumberWidget()),);
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => OTPScreen(
+                otp: randomNumeric(6),
+              )),
+    );
   }
 
   /// Navigates to the loginScreen when the action is triggered.
@@ -102,5 +107,3 @@ class _LandingPageState extends State<LandingPage> {
   //   Navigator.pushNamed(context, "/login");
   // }
 }
-
-
