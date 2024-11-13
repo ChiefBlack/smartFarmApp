@@ -1,15 +1,25 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter_sms/flutter_sms.dart';
+import 'package:http/http.dart' as http;
 import 'package:smart_farm/otpverification.dart';
 
-class OTPScreen extends StatelessWidget {
-  final TextEditingController phoneNumberController = TextEditingController();
+class OTPScreen extends StatefulWidget {
   final String otp;
   final Key? key;
   OTPScreen({
     required this.otp,
     this.key,
   }) : super(key: key);
+
+  @override
+  _OTPScreenState createState() => _OTPScreenState();
+}
+
+class _OTPScreenState extends State<OTPScreen> {
+  final TextEditingController phoneNumberController = TextEditingController();
+  String? selectedCountryCode = '+1';  // Default to USA
+
+  final List<String> countryCodes = ['+1', '+44', '+91', '+27'];
 
   @override
   Widget build(BuildContext context) {
@@ -21,23 +31,69 @@ class OTPScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            DropdownButton<String>(
+              value: selectedCountryCode,
+              onChanged: (String? newValue) {
+                setState(() {
+                  selectedCountryCode = newValue!;
+                });
+              },
+              items: countryCodes.map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+            ),
+            const SizedBox(height: 20),
             TextField(
               controller: phoneNumberController,
               keyboardType: TextInputType.phone,
               decoration: const InputDecoration(
+                focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                    borderSide: BorderSide(
+                      color: Color.fromARGB(255, 102, 170, 134),
+                      width: 2.0,
+                    )),
+                enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                    borderSide: BorderSide(
+                      color: Color.fromARGB(255, 102, 170, 134),
+                      width: 2.0,
+                    )),
                 labelText: 'Enter your phone number',
               ),
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all<Color>(
+                  const Color.fromARGB(255, 102, 170, 134),
+                ),
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18.0),
+                  ),
+                ),
+              ),
+              onPressed: () async {
                 String phoneNumber = phoneNumberController.text.trim();
-                // Validate phone number (if needed)
                 if (phoneNumber.isNotEmpty) {
-                  // Send OTP
-                  sendOTP(context, phoneNumber);
+                  // Await the Future result of sendOTP
+                  bool success = await sendOTP(phoneNumber);
+                  print(success);
+                  if (success) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('OTP sent successfully')),
+                    );
+                    onTapVerify(context, selectedCountryCode! + phoneNumber);
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Failed to send OTP. Please try again.')),
+                    );
+                  }
                 } else {
-                  // Handle empty phone number
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text('Please enter a phone number'),
@@ -45,7 +101,14 @@ class OTPScreen extends StatelessWidget {
                   );
                 }
               },
-              child: const Text('Send OTP'),
+              child: const Text(
+                'Send OTP',
+                style: TextStyle(
+                  fontSize: 20,
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
           ],
         ),
@@ -53,34 +116,51 @@ class OTPScreen extends StatelessWidget {
     );
   }
 
-  void sendOTP(BuildContext context, String phoneNumber) {
-    // Create SMS message body
-    String message = 'Your OTP for verification is: $otp';
+  // Updated sendOTP function using Future<bool> to return success status
+  Future<bool> sendOTP(String phoneNumber) async {
+  String fullPhoneNumber = selectedCountryCode! + phoneNumber;
+  print(fullPhoneNumber);
 
-    // Use flutter_sms package to send SMS
-    _sendSMS(phoneNumber, message);
-    onTapVerify(context, phoneNumber);
-    //Navigate to OTP verification screen
-  }
+  try {
+    // Send phone number as form data, not as JSON
+    var response = await http.post(
+      Uri.parse('http://192.168.15.225:8000/api/users/send-otp/'),
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded', // Use form URL encoding
+      },
+      body: {
+        'phone_number': fullPhoneNumber, // Send phone number as a form field
+      },
+    );
 
-  void _sendSMS(String phoneNumber, String message) async {
-    try {
-      // Use FlutterSms class to send SMS
-      await sendSMS(message: message, recipients: [phoneNumber]);
-    } catch (error) {
-      print("Error sending SMS: $error");
-      // Handle error here
+    print("Request Sent: ${response.request?.url}");
+    print("Response Status: ${response.statusCode}");
+    print("Response Body: ${response.body}");
+
+    if (response.statusCode == 200) {
+      print('OTP sent successfully');
+      return true;
+    } else {
+      var responseBody = jsonDecode(response.body);
+      print('Error: ${responseBody['status']}');
+      return false;
     }
+  } catch (error) {
+    print("Error sending OTP: $error");
+    return false;
   }
+}
+
 
   void onTapVerify(BuildContext context, String phoneNumber) {
     Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) => OTPVerificationScreen(
-                otp: otp,
-                phoneNumber: phoneNumber,
-              )),
+        builder: (context) => OTPVerificationScreen(
+          otp: widget.otp,
+          phoneNumber: phoneNumber,
+        ),
+      ),
     );
   }
 }

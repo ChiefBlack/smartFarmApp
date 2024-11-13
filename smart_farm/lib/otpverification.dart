@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:smart_farm/videostream.dart';
+import 'package:smart_farm/newPages/VideoDetect.dart';
 
 class OTPVerificationScreen extends StatelessWidget {
   final TextEditingController otpController = TextEditingController();
@@ -22,17 +22,47 @@ class OTPVerificationScreen extends StatelessWidget {
               controller: otpController,
               keyboardType: TextInputType.number,
               decoration: const InputDecoration(
+                enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(20)),
+                borderSide: BorderSide(
+                    color: const Color.fromARGB(255, 102, 170, 134), width: 2.0),
+                    
+                ),
+                focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(20)),
+                borderSide: BorderSide(
+                    color: const Color.fromARGB(255, 102, 170, 134), width: 2.0),
+                    
+                ),
+                
                 labelText: 'Enter OTP',
+                
+
               ),
             ),
             const SizedBox(height: 20),
             ElevatedButton(
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all<Color>(
+                  const Color.fromARGB(255, 102, 170, 134), // Same color as before
+                ),
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18.0), // Rounded corners
+                  ),
+                ),
+              ),
               onPressed: () {
                 String enteredOTP = otpController.text.trim();
                 // Verify OTP
                 verifyOTP(context, enteredOTP);
               },
-              child: const Text('Verify OTP'),
+              child: const Text(
+                'Verify OTP',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+              ),
             ),
           ],
         ),
@@ -43,10 +73,9 @@ class OTPVerificationScreen extends StatelessWidget {
   void verifyOTP(BuildContext context, String enteredOTP) {
     if (enteredOTP == otp) {
       // OTP is correct
-
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => const VideoApp()),
+        MaterialPageRoute(builder: (context) => const VideoDetect()),
       );
 
       ScaffoldMessenger.of(context).showSnackBar(

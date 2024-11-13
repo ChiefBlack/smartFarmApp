@@ -34,15 +34,16 @@ class _LandingPageState extends State<LandingPage> {
                     width: MediaQuery.of(context).size.width - 50,
                     child: ElevatedButton(
                         style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all<Color>(
+                            backgroundColor: WidgetStateProperty.all<Color>(
                                 const Color.fromARGB(255, 102, 170, 134)),
-                            shape: MaterialStateProperty.all<
+                            shape: WidgetStateProperty.all<
                                 RoundedRectangleBorder>(RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(18.0),
                             ))),
                         child: const Text(
                           "Get Started",
                           style: TextStyle(
+                            color: Colors.black,
                               fontSize: 20, fontWeight: FontWeight.bold),
                         ),
                         onPressed: () {

@@ -43,11 +43,22 @@ dependencies:
   better_player: ^0.0.66
   intl_phone_field: ^3.1.0
   random_string: ^2.1.0
+  image_picker: ^0.8.4+3
+  path_provider: ^2.0.2
+  http: ^1.2.2 # For making HTTP requests
+  camera: ^0.9.4  # For camera access
+ 
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons: "^0.9.2" 
 
+flutter_icons:
+  android: true
+  ios: true
+  image_path_android: "assets/images/image_logo.png"
+  image_path_ios: "assets/images/image_logo.png"
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
   # activated in the `analysis_options.yaml` file located at the root of your
@@ -91,6 +102,6 @@ flutter:
   #       - asset: fonts/TrajanPro.ttf
   #       - asset: fonts/TrajanPro_Bold.ttf
   #         weight: 700
-  #
+  
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
